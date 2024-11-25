@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: warehouse
+    database: warehouse  
+    schema: raw
+    tables:
+      - name: pbp
+      - name: injuries
+      - name: rosters
+      - name: advstats_def
+      - name: advstats_pass
+      - name: advstats_rec
+      - name: advstats_rush

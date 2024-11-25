@@ -1,0 +1,150 @@
+with
+
+players as (
+    select * from {{ ref('dim_players') }}
+),
+
+games as (
+    select * from {{ ref('dim_games') }}
+),
+
+plays as (
+    select * from {{ ref('fct_play') }}
+),
+
+final as (
+    select
+
+        games.game_id,
+        plays.play_id,
+		games.season,
+		games.home_team,
+		games.away_team,
+		games.week_of_season,
+		games.playoffs,
+		games.kickoff_time,
+		games.neutral_site,
+		games.home_coach,
+		games.away_coach,
+		games.stadium,
+		games.weather_description,
+		games.temperature_fahrenheit,
+		games.temp_f,
+		games.humidity_percent,
+		games.wind_description,
+		games.wind_mph,
+		games.roof_description,
+		games.surface_description,
+		games.home_score,
+		games.away_score,
+		games.home_score - games.away_score as net_score_relative_to_home_team,
+		games.home_score + games.away_score as total_points_scored,
+		games.home_opening_kickoff,
+
+		plays.possession_team,
+		plays.defense_team,
+		plays.side_of_field,
+		plays.drive,
+		plays.absolute_yardline,
+		plays.yardline_description,
+		plays.yards_to_go_net,
+		plays.home_timeouts_remaining,
+		plays.away_timeouts_remaining,
+
+		plays.quarter_seconds_remaining,
+		plays.half_seconds_remaining,
+		plays.game_seconds_remaining,
+		plays.game_half,
+		plays.end_of_quarter,
+		plays.qtr,
+		plays.down,
+		plays.series,
+		plays.series_success,
+		plays.series_result,
+		plays.order_sequence,
+		plays.time_of_day,
+		plays.play_clock_time,
+		plays.end_clock_time,
+		plays.end_yard_line,
+		plays.fixed_drive,
+		plays.fixed_drive_result,
+		plays.drive_real_start_time,
+		plays.drive_play_count,
+		plays.drive_time_of_possession,
+		plays.drive_first_downs,
+		plays.drive_inside20,
+		plays.drive_ended_with_score,
+		plays.drive_quarter_start,
+		plays.drive_quarter_end,
+		plays.drive_yards_penalized,
+		plays.drive_start_transition,
+		plays.drive_end_transition,
+		plays.drive_game_clock_start,
+		plays.drive_game_clock_end,
+		plays.drive_start_yard_line,
+		plays.drive_end_yard_line,
+		
+		plays.goal_to_go,
+		plays.scoring_play,
+		plays.yards_to_go,
+		plays.play_type,
+		plays.yards_gained,
+		plays.shotgun,
+		plays.no_huddle,
+		plays.qb_dropback,
+		plays.qb_scramble,
+		plays.run_location,
+        plays.run_gap,
+
+		plays.td_team,
+		plays.td_player_name,
+		plays.td_player_id,
+		plays.result_home_score,
+		plays.result_away_score,
+		plays.possession_team_score,
+		plays.defteam_score,
+		plays.score_differential,
+		plays.possession_team_score_after_play,
+		plays.defteam_score_after_play,
+		plays.score_differential_after_play,
+
+        plays.third_down_converted,
+        plays.third_down_failed,
+        plays.fourth_down_converted,
+        plays.fourth_down_failed,
+        plays.touchback,
+		plays.out_of_bounds,
+		plays.fumble,
+        plays.fumble_forced,
+        plays.fumble_not_forced,
+		plays.fumble_lost,
+        plays.fumble_out_of_bounds,
+        plays.is_safety,
+		plays.penalty,
+		plays.penalty_type,
+		plays.penalty_team,
+		plays.penalty_yards,
+		plays.replay_or_challenge,
+		plays.tackled_for_loss,
+		plays.rush_attempt,
+		plays.touchdown,
+        plays.rush_touchdown,
+		plays.two_point_attempt,
+		plays.aborted_play,
+
+        players.player_id,
+		players.full_name,
+		players.height_inches,
+		players.weight_pounds,
+		players.college,
+		players.years_exp,
+		players.headshot_url,
+		players.draft_number
+        
+    from plays
+        left join games on plays.game_id = games.game_id
+		left join players on plays.rusher_player_id = players.player_id
+    where play_type = 'run'
+)
+
+select * from final
